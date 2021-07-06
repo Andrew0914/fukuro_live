@@ -17,7 +17,7 @@ defmodule FukuroLiveWeb.Router do
   scope "/", FukuroLiveWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", Live.BoardLive, :index
   end
 
   # Other scopes may use custom stacks.
