@@ -1,9 +1,11 @@
 defmodule FukuroLiveWeb.Live.Components.Canvas do
   # uses
   use Surface.Component
-
+  
   #props
+  @doc "The viewBox of the svg canvas"
   prop viewBox, :string, required: true
+  @doc "Slot for the content or schema figures"
   slot default
 
   #methods
@@ -12,7 +14,7 @@ defmodule FukuroLiveWeb.Live.Components.Canvas do
     <section class="canvas">
       <svg viewBox={ @viewBox }>
         <defs>
-          <rect id="component" width="90" height="50" />
+          <rect id="component" width="100" height="50" />
         </defs>
         <#slot />
       </svg>
