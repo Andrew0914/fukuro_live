@@ -1,3 +1,4 @@
 <Canvas viewBox="0 0 1200 620">
   <Client x={50} y={100} label="Client 1" id="client_1"/>
+  <Service x={290} y={100} label="Service 1" id="service_1" />
 </Canvas>
