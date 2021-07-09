@@ -7,6 +7,8 @@ defmodule FukuroLiveWeb.Live.Components.ArrowConnector do
   prop y, :integer, required: true
   prop x2, :integer, required: true
   prop y2, :integer, required: true
+  prop origin, :string, required: true
+  prop destiny, :string, required: true
 
   # data
   data start_x, :integer, default: 0
@@ -17,7 +19,17 @@ defmodule FukuroLiveWeb.Live.Components.ArrowConnector do
 
   # methods
   def update(assigns, socket) do
-    {:ok, socket |> assign_line_coordinates(assigns) |> assign_arrowhead_polygon()}
+    {:ok,
+     socket
+     |> assign_relations(assigns)
+     |> assign_line_coordinates(assigns)
+     |> assign_arrowhead_polygon()}
+  end
+
+  def assign_relations(socket, assigns) do
+    socket
+    |> assign(origin: assigns.origin)
+    |> assign(destiny: assigns.destiny)
   end
 
   def assign_line_coordinates(socket, assigns) do
@@ -33,7 +45,7 @@ defmodule FukuroLiveWeb.Live.Components.ArrowConnector do
   end
 
   def arrowhead_points(x, y) do
-    "#{x},#{y} #{x - 4},#{y + 4} #{x - 4},#{y - 4} "
+    "#{x},#{y} #{x - 4},#{y + 4} #{x - 4},#{y - 4}"
   end
 
   def render(assigns) do
