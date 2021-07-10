@@ -1,14 +1,14 @@
 defmodule FukuroLiveWeb.Live.Components.Canvas do
   # uses
   use Surface.Component
-  
-  #props
+
+  # props
   @doc "The viewBox of the svg canvas"
   prop viewBox, :string, required: true
   @doc "Slot for the content or schema figures"
   slot default
 
-  #methods
+  # methods
   def render(assigns) do
     ~F"""
     <section class="canvas">

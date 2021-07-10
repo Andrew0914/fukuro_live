@@ -1,6 +1,7 @@
 defmodule FukuroLiveWeb.Live.Components.ArrowConnector do
   # uses
   use Surface.Component
+  alias FukuroLiveWeb.Live.Components.ArrowConnectorFlow
 
   # props
   prop x, :integer, required: true
@@ -50,11 +51,11 @@ defmodule FukuroLiveWeb.Live.Components.ArrowConnector do
 
   def render(assigns) do
     ~F"""
-    <g>
+    <g id={"#{@origin}-#{@destiny}"}>
       <line x1={@start_x} y1={@start_y} x2={@end_x} y2={@end_y} stroke="black" stroke-width="1" />
       <polygon points={@arrowhead_polygon} fill="black" stroke="black" strokke-width="1" />
+      <ArrowConnectorFlow  x1={@start_x} y1={@start_y} x2={@end_x} y2={@end_y}/>
     </g>
-      
     """
   end
 end
