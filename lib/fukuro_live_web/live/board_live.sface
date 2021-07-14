@@ -1,0 +1,9 @@
+<Canvas viewBox="0 0 1200 620">
+{#for item <- @items}
+  {live_component(@socket, item.component, item.props)}
+{/for}
+
+{#for connector <- @connectors}
+  {live_component(@socket, ArrowConnector, connector)}
+{/for}
+</Canvas>
