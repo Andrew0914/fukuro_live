@@ -47,6 +47,18 @@ defmodule FukuroLiveWeb.Endpoint do
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
+   # CORS support
+   plug Corsica,
+    origins: [
+      "http://localhost:3000",
+    ],
+    log: [
+      rejected: :error,
+      invalid: :warn,
+      accepted: :debug
+    ],
+    allow_headers: :all
+
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
