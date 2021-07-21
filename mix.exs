@@ -47,7 +47,8 @@ defmodule FukuroLive.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:surface, "~> 0.5.0"}
+      {:surface, "~> 0.5.0"},
+      {:disssim, git: "https://github.com/MachinesAreUs/disssim.git"}
     ]
   end
 

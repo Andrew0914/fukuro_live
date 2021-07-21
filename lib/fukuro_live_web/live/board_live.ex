@@ -61,25 +61,6 @@ defmodule FukuroLiveWeb.Live.BoardLive do
   def dummy_schema() do
     [
       %{
-        "id" => "client_1",
-        "label" => "Client 1",
-        "type" => "client",
-        "request_rate" => 10,
-        "x" => 50,
-        "y" => 100,
-        "resources" => ["service_1"]
-      },
-      %{
-        "id" => "service_1",
-        "label" => "Service 1",
-        "type" => "service",
-        "max_request_capacity" => 50,
-        "x" => 290,
-        "y" => 100,
-        "resources" => ["resource_1"],
-        "concurrency" => 5
-      },
-      %{
         "id" => "resource_1",
         "label" => "Resource 1",
         "type" => "resource",
@@ -90,7 +71,81 @@ defmodule FukuroLiveWeb.Live.BoardLive do
         "x" => 530,
         "y" => 100,
         "resources" => []
+      },
+      %{
+        "id" => "client_1",
+        "label" => "Client 1",
+        "type" => "client",
+        "request_rate" => 10,
+        "x" => 50,
+        "y" => 100,
+        "resources" => ["service_1", "service_2"]
+      },
+      %{
+        "id" => "resource_2",
+        "label" => "Resource 2",
+        "type" => "resource",
+        "min_latency" => 1000,
+        "max_latency" => 2000,
+        "failure_rate" => 20,
+        "concurrency" => 5,
+        "x" => 530,
+        "y" => 100,
+        "resources" => []
+      },
+      %{
+        "id" => "service_2",
+        "label" => "Service 1",
+        "type" => "service",
+        "max_request_capacity" => 50,
+        "x" => 290,
+        "y" => 100,
+        "resources" => ["resource_1", "resource_2", "resource_3"],
+        "concurrency" => 5
+      },
+      %{
+        "id" => "resource_3",
+        "label" => "Resource 3",
+        "type" => "resource",
+        "min_latency" => 1000,
+        "max_latency" => 2000,
+        "failure_rate" => 20,
+        "concurrency" => 5,
+        "x" => 530,
+        "y" => 100,
+        "resources" => []
+      },
+      %{
+        "id" => "service_1",
+        "label" => "Service 1",
+        "type" => "service",
+        "max_request_capacity" => 50,
+        "x" => 290,
+        "y" => 100,
+        "resources" => ["resource_1", "resource_2", "resource_3"],
+        "concurrency" => 5
       }
     ]
+  end
+
+  def build_simulation() do
+    schema = dummy_schema()
+
+    schema
+    |> Enum.each(fn item ->
+      simulate(schema, item)
+    end)
+  end
+
+  def simulate(schema, item) do
+    item["resources"]
+    |> Enum.each(fn resource_id ->
+      resource_item =
+        schema |> Enum.find(fn resource_item -> resource_id == resource_item["id"] end)
+
+      simulate(schema, resource_item)
+    end)
+
+    IO.puts("Simulate item #{item["id"]}")
   end
 end
