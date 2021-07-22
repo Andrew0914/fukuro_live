@@ -1,13 +1,23 @@
 defmodule FukuroLiveWeb.Live.BoardLive do
   use Surface.LiveView
   alias FukuroLiveWeb.Live.Components.{Canvas, Client, Service, Resource, ArrowConnector}
+  alias FukuroLive.SimulationUtils
 
-  def mount(_params, _sssion, socket) do
-    {:ok, socket |> assign_items() |> assign_connectors()}
+  def mount(_params, _session, socket) do
+    {:ok,
+     socket
+     |> assign_schema()
+     |> assign_live_items()
+     |> assign_live_connector()
+     |> add_simulate_processes()}
   end
 
-  def assign_items(socket) do
-    socket |> assign(items: parse_items())
+  def assign_schema(socket) do
+    socket |> assign(schema: SimulationUtils.dummy_schema())
+  end
+
+  def assign_live_items(%{assigns: %{schema: schema}} = socket) do
+    socket |> assign(live_items: parsed_items(schema))
   end
 
   defp get_module_component(type) do
@@ -20,19 +30,18 @@ defmodule FukuroLiveWeb.Live.BoardLive do
     %{
       props:
         item
-        |> Map.delete("type")
         |> Enum.map(fn {key, value} -> {String.to_existing_atom(key), value} end),
       component: component
     }
   end
 
-  def parse_items() do
-    dummy_schema() |> Enum.map(&parse_time/1)
+  def parsed_items(schema) do
+    schema |> Enum.map(&parse_time/1)
   end
 
-  def assign_connectors(socket) do
+  def assign_live_connector(%{assigns: %{live_items: live_items}} = socket) do
     socket
-    |> assign(connectors: generate_connectors(socket.assigns.items))
+    |> assign(live_connectors: generate_connectors(live_items))
   end
 
   def generate_connectors(items) do
@@ -58,94 +67,11 @@ defmodule FukuroLiveWeb.Live.BoardLive do
     end)
   end
 
-  def dummy_schema() do
-    [
-      %{
-        "id" => "resource_1",
-        "label" => "Resource 1",
-        "type" => "resource",
-        "min_latency" => 1000,
-        "max_latency" => 2000,
-        "failure_rate" => 20,
-        "concurrency" => 5,
-        "x" => 530,
-        "y" => 100,
-        "resources" => []
-      },
-      %{
-        "id" => "client_1",
-        "label" => "Client 1",
-        "type" => "client",
-        "request_rate" => 10,
-        "x" => 50,
-        "y" => 100,
-        "resources" => ["service_1", "service_2"]
-      },
-      %{
-        "id" => "resource_2",
-        "label" => "Resource 2",
-        "type" => "resource",
-        "min_latency" => 1000,
-        "max_latency" => 2000,
-        "failure_rate" => 20,
-        "concurrency" => 5,
-        "x" => 530,
-        "y" => 100,
-        "resources" => []
-      },
-      %{
-        "id" => "service_2",
-        "label" => "Service 1",
-        "type" => "service",
-        "max_request_capacity" => 50,
-        "x" => 290,
-        "y" => 100,
-        "resources" => ["resource_1", "resource_2", "resource_3"],
-        "concurrency" => 5
-      },
-      %{
-        "id" => "resource_3",
-        "label" => "Resource 3",
-        "type" => "resource",
-        "min_latency" => 1000,
-        "max_latency" => 2000,
-        "failure_rate" => 20,
-        "concurrency" => 5,
-        "x" => 530,
-        "y" => 100,
-        "resources" => []
-      },
-      %{
-        "id" => "service_1",
-        "label" => "Service 1",
-        "type" => "service",
-        "max_request_capacity" => 50,
-        "x" => 290,
-        "y" => 100,
-        "resources" => ["resource_1", "resource_2", "resource_3"],
-        "concurrency" => 5
-      }
-    ]
-  end
-
-  def build_simulation() do
-    schema = dummy_schema()
-
-    schema
-    |> Enum.each(fn item ->
-      simulate(schema, item)
-    end)
-  end
-
-  def simulate(schema, item) do
-    item["resources"]
-    |> Enum.each(fn resource_id ->
-      resource_item =
-        schema |> Enum.find(fn resource_item -> resource_id == resource_item["id"] end)
-
-      simulate(schema, resource_item)
-    end)
-
-    IO.puts("Simulate item #{item["id"]}")
+  def add_simulate_processes(%{assigns: %{live_items: live_items, schema: schema}} = socket) do
+    items_with_simulation =
+      SimulationUtils.build_simulation_order(schema)
+      |> SimulationUtils.create_simulation(live_items)
+    IO.inspect items_with_simulation
+    socket |> assign(live_items: items_with_simulation)
   end
 end

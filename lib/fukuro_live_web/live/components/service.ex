@@ -8,8 +8,6 @@ defmodule FukuroLiveWeb.Live.Components.Service do
   prop y, :integer, required: true
   @doc "The label to identify service component"
   prop label, :string, required: true
-  @doc "Max request capacity for the service"
-  prop max_request_capacity, :integer, default: 10
   @doc "Concurrency, how many request can handle at a time"
   prop concurrency, :integer, default: 10
   @doc "List of related resources"
@@ -66,9 +64,6 @@ defmodule FukuroLiveWeb.Live.Components.Service do
       </text>
       <text x={elem(@stats_position, 0)} y={elem(@stats_position, 1)}  font-size="12" font-family="Arial" fill="red">
         Req. in progress {@request_in_progress}
-      </text>
-      <text x={elem(@stats_position, 0)} y={fix_stat_y_postion(@stats_position)}  font-size="12" font-family="Arial">
-        Max request capacity {@max_request_capacity}
       </text>
       <text x={elem(@stats_position, 0)} y={fix_stat_y_postion(@stats_position, 35)}  font-size="12" font-family="Arial" fill="red">
         Failure Rate {@failure_rate} %
