@@ -8,8 +8,7 @@ defmodule FukuroLiveWeb.Live.BoardLive do
      socket
      |> assign_schema()
      |> assign_live_items()
-     |> assign_live_connector()
-     |> add_simulate_processes()}
+     |> assign_live_connector()}
   end
 
   def assign_schema(socket) do
@@ -67,11 +66,11 @@ defmodule FukuroLiveWeb.Live.BoardLive do
     end)
   end
 
-  def add_simulate_processes(%{assigns: %{live_items: live_items, schema: schema}} = socket) do
-    items_with_simulation =
-      SimulationUtils.build_simulation_order(schema)
-      |> SimulationUtils.create_simulation(live_items)
-    IO.inspect items_with_simulation
-    socket |> assign(live_items: items_with_simulation)
-  end
+  # def add_simulate_processes(%{assigns: %{live_items: live_items, schema: schema}} = socket) do
+  #   items_with_simulation =
+  #     SimulationUtils.build_simulation_order(schema)
+  #     |> SimulationUtils.create_simulation(live_items)
+
+  #   socket |> assign(live_items: items_with_simulation)
+  # end
 end

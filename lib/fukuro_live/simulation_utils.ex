@@ -38,20 +38,25 @@ defmodule FukuroLive.SimulationUtils do
     item = schema |> Enum.at(index)
 
     if index < schema |> length() do
-      if item["resources"] |> length() > 0 do
-        if ids |> Enum.member?(item["id"]) do
-          id_index = ids |> Enum.find_index(fn id -> id == item["id"] end)
-          new_ids = List.insert_at(ids, id_index, item["resources"]) |> List.flatten()
-          build_simulation_order(schema, index + 1, new_ids)
-        else
-          build_simulation_order(schema, index + 1, ids ++ item["resources"] ++ [item["id"]])
-        end
+      if ids |> Enum.member?(item["id"]) do
+        id_index = ids |> Enum.find_index(fn id -> id == item["id"] end)
+        new_ids = List.insert_at(ids, id_index, item["resources"]) |> List.flatten()
+        build_simulation_order(schema, index + 1, new_ids)
       else
-        build_simulation_order(schema, index + 1, ids ++ [item["id"]])
+        build_simulation_order(schema, index + 1, ids ++ item["resources"] ++ [item["id"]])
       end
     else
       ids |> Enum.uniq()
     end
+  end
+
+  def update_live_item_with_simulation(live_item, simulation_props, simulated_items) do
+    IO.puts live_item.props[:id]
+    pid = simulate(live_item, simulation_props, simulated_items)
+    props_with_pid = live_item.props |> Keyword.put_new(:pid, pid)
+
+    live_item
+    |> Map.replace(:props, props_with_pid)
   end
 
   def create_simulation(simulation_order, live_items) do
@@ -60,42 +65,23 @@ defmodule FukuroLive.SimulationUtils do
       live_item =
         live_items |> Enum.find(fn item -> item.props |> Keyword.get(:id) == item_id end)
 
-      simulation_props = live_item.props |> Keyword.drop([:x, :y, :label, :id, :resources, :type])
+      simulation_props = live_item.props |> Keyword.drop([:x, :y, :label, :type])
 
-      if live_item.props[:resources] |> length() <= 0 do
-        update_item =
-          live_item
-          |> Map.replace(
-            :props,
-            live_item.props
-            |> Keyword.put_new(:pid, simulate(live_item.props[:type], simulation_props))
-          )
-
-        acc ++ [update_item]
-      else
-        simulated_resources =
-          live_item.props[:resources]
-          |> Enum.map(fn resource_id ->
-            acc |> Enum.find(fn item -> item.props[:id] == resource_id end)
-          end)
-
-        update_item =
-          live_item
-          |> Map.replace(
-            :props,
-            live_item.props
-            |> Keyword.put_new(
-              :pid,
-              simulate(
-                live_item.props[:type],
-                simulation_props |> Keyword.put_new(:resources, simulated_resources)
-              )
-            )
-          )
-
-        acc ++ [update_item]
-      end
+      acc ++ [update_live_item_with_simulation(live_item, simulation_props, acc)]
     end)
+  end
+
+  def simulate(item, props, simulated_items) do
+    resources =
+      item.props[:resources]
+      |> Enum.map(fn resource_id ->
+        simulated_items
+        |> Enum.find(fn simulated_item -> simulated_item.props[:id] == resource_id end)
+      end)
+
+    simulation_props = props |> Keyword.put_new(:resources, resources)
+
+    simulate(item.props[:type], simulation_props)
   end
 
   def simulate("resource", props) do
