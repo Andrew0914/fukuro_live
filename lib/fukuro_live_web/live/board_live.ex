@@ -4,11 +4,19 @@ defmodule FukuroLiveWeb.Live.BoardLive do
   alias FukuroLive.SimulationUtils
 
   def mount(_params, _session, socket) do
+    timer_update()
     {:ok,
      socket
      |> assign_schema()
      |> assign_live_items()
      |> assign_live_connector()}
+  end
+
+  def handle_info({:tick}, %{assigns: %{live_items: live_items}} = socket) do
+    live_items |> Enum.each(fn item ->
+      send_update(item.component, item.props)
+    end)
+    {:noreply, socket}
   end
 
   def assign_schema(socket) do
@@ -17,6 +25,11 @@ defmodule FukuroLiveWeb.Live.BoardLive do
 
   def assign_live_items(%{assigns: %{schema: schema}} = socket) do
     socket |> assign(live_items: parsed_items(schema))
+  end
+
+  def assign_live_connector(%{assigns: %{live_items: live_items}} = socket) do
+    socket
+    |> assign(live_connectors: generate_connectors(live_items))
   end
 
   defp get_module_component(type) do
@@ -36,11 +49,6 @@ defmodule FukuroLiveWeb.Live.BoardLive do
 
   def parsed_items(schema) do
     schema |> Enum.map(&parse_time/1)
-  end
-
-  def assign_live_connector(%{assigns: %{live_items: live_items}} = socket) do
-    socket
-    |> assign(live_connectors: generate_connectors(live_items))
   end
 
   def generate_connectors(items) do
@@ -64,6 +72,10 @@ defmodule FukuroLiveWeb.Live.BoardLive do
         y2: destiny.props[:y]
       ]
     end)
+  end
+
+  def timer_update() do
+    :timer.send_interval(1000, self, {:tick})
   end
 
   # def add_simulate_processes(%{assigns: %{live_items: live_items, schema: schema}} = socket) do

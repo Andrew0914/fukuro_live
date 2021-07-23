@@ -1,7 +1,6 @@
 defmodule FukuroLiveWeb.Live.Components.ArrowConnectorFlow do
   # uses
   use Surface.Component
-  alias FukuroLiveWeb.Live.Components.ErrorFlow
 
   prop x1, :integer, required: true
   prop y1, :integer, required: true
@@ -17,7 +16,6 @@ defmodule FukuroLiveWeb.Live.Components.ArrowConnectorFlow do
         <animate attributeType="XML" attributeName="cy" from={@y1} to={@y2} dur={"1.#{time}"} repeatCount="indefinite"/>
       </circle>
     {/for}
-      <ErrorFlow x1={@x1} y1={@y1} x2={@x2} y2={@y2} time={1.6}/>
     </g>
     """
   end

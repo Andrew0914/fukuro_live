@@ -2,7 +2,7 @@ defmodule FukuroLiveWeb.Live.Components.Resource do
   # uses
   use Surface.LiveComponent
 
-  #properties
+  # properties
   prop x, :integer, required: true
   prop y, :integer, required: true
   prop label, :string, required: true
@@ -14,7 +14,6 @@ defmodule FukuroLiveWeb.Live.Components.Resource do
   # data
   data label_position, :tuple, default: {0, 0}
   data stats_position, :tuple, default: {0, 0}
-  
 
   # methods
   def update(assings, socket) do
@@ -29,16 +28,12 @@ defmodule FukuroLiveWeb.Live.Components.Resource do
     socket |> assign(assings)
   end
 
-  def calculate_and_assign_label_position(
-        %{assigns: %{label_position: {lx, ly}, x: x, y: y}} = socket
-      ) do
-    socket |> assign(label_position: {lx + x + 15, ly + y + 30})
+  def calculate_and_assign_label_position(%{assigns: %{x: x, y: y}} = socket) do
+    socket |> assign(label_position: {x + 15, y + 30})
   end
 
-  def calculate_and_assign_stats_position(
-        %{assigns: %{stats_position: {sx, sy}, x: x, y: y}} = socket
-      ) do
-    socket |> assign(stats_position: {sx + x, sy + y + 65})
+  def calculate_and_assign_stats_position(%{assigns: %{x: x, y: y}} = socket) do
+    socket |> assign(stats_position: {x, y + 65})
   end
 
   defp fix_stat_y_postion(stats_position, fix \\ 17) do

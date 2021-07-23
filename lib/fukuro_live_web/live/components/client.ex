@@ -29,16 +29,12 @@ defmodule FukuroLiveWeb.Live.Components.Client do
     socket |> assign(assings)
   end
 
-  def calculate_and_assign_label_position(
-        %{assigns: %{label_position: {lx, ly}, x: x, y: y}} = socket
-      ) do
-    socket |> assign(label_position: {lx + x + 15, ly + y + 30})
+  def calculate_and_assign_label_position(%{assigns: %{x: x, y: y}} = socket) do
+    socket |> assign(label_position: {x + 15, y + 30})
   end
 
-  def calculate_and_assign_stats_position(
-        %{assigns: %{stats_position: {sx, sy}, x: x, y: y}} = socket
-      ) do
-    socket |> assign(stats_position: {sx + x, sy + y + 65})
+  def calculate_and_assign_stats_position(%{assigns: %{x: x, y: y}} = socket) do
+    socket |> assign(stats_position: {x, y + 65})
   end
 
   def render(assigns) do
