@@ -10,6 +10,8 @@ defmodule FukuroLiveWeb.Live.Components.Client do
   prop label, :string, required: true
   @doc "Request rate for the client"
   prop request_rate, :integer, default: 1
+  @doc "Simulation pid"
+  prop pid, :pid, default: nil
 
   # data
   data label_position, :tuple, default: {0, 0}

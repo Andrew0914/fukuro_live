@@ -10,6 +10,8 @@ defmodule FukuroLiveWeb.Live.Components.Resource do
   prop min_latency, :integer, default: 1
   prop concurrency, :integer, default: 10
   prop failure_rate, :number, default: 0.0
+  @doc "Simulation pid"
+  prop pid, :pid, default: nil
 
   # data
   data label_position, :tuple, default: {0, 0}

@@ -12,6 +12,8 @@ defmodule FukuroLiveWeb.Live.Components.Service do
   prop concurrency, :integer, default: 10
   @doc "List of related resources"
   prop resources, :list, default: []
+  @doc "Simulation pid"
+  prop pid, :pid, default: nil
 
   # data
   data label_position, :tuple, default: {0, 0}
