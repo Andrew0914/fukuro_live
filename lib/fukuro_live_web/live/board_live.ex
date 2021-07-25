@@ -4,18 +4,21 @@ defmodule FukuroLiveWeb.Live.BoardLive do
   alias FukuroLive.SimulationUtils
 
   def mount(_params, _session, socket) do
-    timer_update()
+    # timer_update()
     {:ok,
      socket
      |> assign_schema()
      |> assign_live_items()
-     |> assign_live_connector()}
+     |> assign_live_connector()
+     |> add_simulate_processes()}
   end
 
   def handle_info({:tick}, %{assigns: %{live_items: live_items}} = socket) do
-    live_items |> Enum.each(fn item ->
+    live_items
+    |> Enum.each(fn item ->
       send_update(item.component, item.props)
     end)
+
     {:noreply, socket}
   end
 
@@ -78,11 +81,11 @@ defmodule FukuroLiveWeb.Live.BoardLive do
     :timer.send_interval(1000, self, {:tick})
   end
 
-  # def add_simulate_processes(%{assigns: %{live_items: live_items, schema: schema}} = socket) do
-  #   items_with_simulation =
-  #     SimulationUtils.build_simulation_order(schema)
-  #     |> SimulationUtils.create_simulation(live_items)
+  def add_simulate_processes(%{assigns: %{live_items: live_items, schema: schema}} = socket) do
+    items_with_simulation =
+      SimulationUtils.build_simulation_order(schema)
+      |> SimulationUtils.create_simulation(live_items)
 
-  #   socket |> assign(live_items: items_with_simulation)
-  # end
+    socket |> assign(live_items: items_with_simulation) |> assign(is_simulated: true)
+  end
 end

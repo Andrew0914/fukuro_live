@@ -51,7 +51,6 @@ defmodule FukuroLive.SimulationUtils do
   end
 
   def update_live_item_with_simulation(live_item, simulation_props, simulated_items) do
-    IO.puts live_item.props[:id]
     pid = simulate(live_item, simulation_props, simulated_items)
     props_with_pid = live_item.props |> Keyword.put_new(:pid, pid)
 
