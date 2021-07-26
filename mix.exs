@@ -20,7 +20,11 @@ defmodule FukuroLive.MixProject do
   def application do
     [
       mod: {FukuroLive.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :corsica
+      ]
     ]
   end
 
@@ -47,7 +51,8 @@ defmodule FukuroLive.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:surface, "~> 0.5.0"}
+      {:surface, "~> 0.5.0"},
+      {:corsica, "~> 1.0"}
     ]
   end
 
