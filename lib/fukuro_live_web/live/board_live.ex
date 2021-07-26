@@ -1,13 +1,21 @@
 defmodule FukuroLiveWeb.Live.BoardLive do
   use Surface.LiveView
   alias FukuroLiveWeb.Live.Components.{Canvas, Client, Service, Resource, ArrowConnector}
+  alias Phoenix.PubSub
+  @topic "notifications"
 
   def mount(_params, _sssion, socket) do
-    {:ok, socket |> assign_items() |> assign_connectors()}
+    PubSub.subscribe FukuroLive.PubSub, @topic
+    state = %{items: [], connectors: []}
+    {:ok, assign(socket, state)}
   end
 
-  def assign_items(socket) do
-    socket |> assign(items: parse_items())
+  def handle_info(%{ payload: %{"data" => data } }, socket) do
+    {:noreply,  socket |> assign_items(data) |> assign_connectors }
+  end
+
+  def assign_items(socket, items) do
+    socket |> assign(items: parse_items(items))
   end
 
   defp get_module_component(type) do
@@ -26,8 +34,8 @@ defmodule FukuroLiveWeb.Live.BoardLive do
     }
   end
 
-  def parse_items() do
-    dummy_schema() |> Enum.map(&parse_time/1)
+  def parse_items(items) do
+    items |> Enum.map(&parse_time/1)
   end
 
   def assign_connectors(socket) do
@@ -58,39 +66,4 @@ defmodule FukuroLiveWeb.Live.BoardLive do
     end)
   end
 
-  def dummy_schema() do
-    [
-      %{
-        "id" => "client_1",
-        "label" => "Client 1",
-        "type" => "client",
-        "request_rate" => 10,
-        "x" => 50,
-        "y" => 100,
-        "resources" => ["service_1"]
-      },
-      %{
-        "id" => "service_1",
-        "label" => "Service 1",
-        "type" => "service",
-        "max_request_capacity" => 50,
-        "x" => 290,
-        "y" => 100,
-        "resources" => ["resource_1"],
-        "concurrency" => 5
-      },
-      %{
-        "id" => "resource_1",
-        "label" => "Resource 1",
-        "type" => "resource",
-        "min_latency" => 1000,
-        "max_latency" => 2000,
-        "failure_rate" => 20,
-        "concurrency" => 5,
-        "x" => 530,
-        "y" => 100,
-        "resources" => []
-      }
-    ]
-  end
 end

@@ -21,10 +21,10 @@ defmodule FukuroLiveWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-   scope "/api", FukuroLiveWeb do
-     pipe_through :api
-     post "/simulate", Simulate, :index
-   end
+  scope "/api", FukuroLiveWeb do
+    pipe_through :api
+    post "/simulate", Simulate, :index
+  end
 
   # Enables LiveDashboard only for development
   #
